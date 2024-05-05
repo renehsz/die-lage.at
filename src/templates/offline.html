@@ -1,0 +1,29 @@
+<%~
+await includeAsync('src/templates/partials/header.html', {
+    title: 'Offline &ndash; Die-Lage.at',
+    description: 'Die-Lage.at - Offline',
+    renderNav: true,
+    includeFonts: false,
+    includeScripts: false,
+})
+%>
+
+<div class="msg">
+    <h1>Offline</h1>
+    <p>
+        Sie sind aktuell offline. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.
+    </p>
+</div>
+
+<script>
+    addEventListener('online', function() {
+        location.reload();
+    });
+</script>
+
+<%~
+include('src/templates/partials/footer.html', {
+    renderFooter: true,
+})
+%>
+

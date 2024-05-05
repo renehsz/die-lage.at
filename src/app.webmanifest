@@ -1,0 +1,76 @@
+{
+    "name": "Die neue Lage",
+    "short_name": "Neue Lage",
+    "start_url": "/",
+    "display_override": ["standalone", "minimal-ui"],
+    "display": "standalone",
+    "background_color": "#FFF",
+    "theme_color": "#051633",
+    "description": "Die neue Lage - Wie viel Zeit verbleibt bis zum Abrüsten?",
+    "icons": [
+        {
+            "src": "./icons/full-size.png",
+            "sizes": "987x987",
+            "type": "image/png"
+        },
+        {
+            "src": "./icons/icon-512px.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "./icons/icon-256px.png",
+            "sizes": "256x256",
+            "type": "image/png"
+        },
+        {
+            "src": "./icons/icon-192px.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "./icons/icon-180px.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        },
+        {
+            "src": "./icons/icon-120px.png",
+            "sizes": "120x120",
+            "type": "image/png"
+        },
+        {
+            "src": "./icons/icon-96px.png",
+            "sizes": "96x96",
+            "type": "image/png"
+        },
+        {
+            "src": "./icons/icon-512px-maskable.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "./icons/icon-192px-maskable.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "./screenshots/wide.webp",
+            "sizes": "1280x821",
+            "form_factor": "wide",
+            "type": "image/webp",
+            "label": "Benutzerschnittstelle am Desktop"
+        },
+        {
+            "src": "./screenshots/narrow.webp",
+            "sizes": "375x722",
+            "form_factor": "narrow",
+            "type": "image/webp",
+            "label": "Benutzerschnittstelle mobil"
+        }
+    ]
+}
+

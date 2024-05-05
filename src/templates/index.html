@@ -1,0 +1,23 @@
+<%~
+await includeAsync('src/templates/partials/header.html', {
+    title: 'Neue Lage &ndash; Die-Lage.at',
+    description: 'Neue Lage: Wie viel Zeit verbleibt bis zum Abrüsten?',
+    renderNav: false,
+    includeFonts: true,
+    includeScripts: true,
+})
+%>
+
+<main>
+    <noscript>
+        <h1>Diese Webseite benötigt JavaScript!</h1>
+        <p>Aktivieren Sie JavaScript in Ihrem Browser, um die Funktionalität nutzen zu können.</p>
+    </noscript>
+</main>
+
+<%~
+include('src/templates/partials/footer.html', {
+    renderFooter: true,
+})
+%>
+

@@ -1,0 +1,18 @@
+#+TITLE:       Die-Lage.AT
+#+SUBTITLE:    README
+#+DESCRIPTION: README for developers of the die-lage.at web application
+#+KEYWORDS:    readme, introduction, quick reference, development, dev, setup
+#+LANGUAGE:    en
+#+AUTHOR:      René Hickersberger
+#+EMAIL:       (concat "r" at-sign "renehsz.com")
+
+Visit the website [[https://Die-Lage.AT/][live]].
+
+** Dev Setup
+#+BEGIN_SRC shell :eval no
+  npm i
+  npm run serve:dev
+#+END_SRC
+
+** License
+GPLv3, see [[./LICENSE][LICENSE]] file.

@@ -1,0 +1,174 @@
+@import 'normalize.css';
+
+/* Black Ops One - licensed under the Open Font License, see fonts/OFL.txt */
+@font-face {
+    font-family: 'Black Ops One';
+    src: url('fonts/BlackOpsOne-Regular.woff2') format('woff2'),
+         url('fonts/BlackOpsOne-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Colors */
+$bg-0: 'bg-0';
+$bg-1: 'bg-1';
+$bg-2: 'bg-2';
+$fg-0: 'fg-0';
+$fg-1: 'fg-1';
+$fg-2: 'fg-2';
+
+$themes: (
+    'light': (
+        $bg-0: #FFF,
+        $bg-1: #FAFAFA,
+        $bg-2: #F5F5F5,
+        $fg-0: #000,
+        $fg-1: #333,
+        $fg-2: #666,
+    ),
+    'dark': (
+        $bg-0: #111,
+        $bg-1: #333,
+        $bg-2: #555,
+        $fg-0: #FFF,
+        $fg-1: #DDD,
+        $fg-2: #AAA,
+    )
+);
+
+/* Theme defaults to dark, but switches to light if the user explicitly prefers light mode */
+@mixin theme-variant($theme, $property, $key, $value_prefix: '', $value_suffix: '') {
+    $value: map-get($theme, $key);
+    #{$property}: unquote($value_prefix + ' ' + $value + ' ' + $value_suffix);
+}
+
+@mixin theme($property, $key, $value_prefix: '', $value_suffix: '') {
+    $light: map-get($themes, 'light');
+    $dark: map-get($themes, 'dark');
+
+    // Default to dark theme
+    @include theme-variant($dark, $property, $key, $value_prefix, $value_suffix);
+
+    // Light theme
+    @media (prefers-color-scheme: light) {
+        @include theme-variant($light, $property, $key, $value_prefix, $value_suffix);
+    }
+}
+
+/* General styles */
+@media (prefers-color-scheme: dark) {
+    a {
+        color: cyan;
+        &:focus {
+            outline: 1px solid cyan;
+        }
+    }
+}
+
+/* Specific styles */
+html {
+    height: -webkit-fill-available;
+}
+body {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+
+    font-family: 'Arial', sans-serif;
+
+    @include theme('background-color', $bg-0);
+    @include theme('color', $fg-0);
+
+    >* {
+        text-align: center;
+        padding: 2vh 4vw;
+    }
+}
+
+article {
+    flex: 1;
+    max-width: 110ch;
+    margin: 0 auto;
+    text-align: justify;
+    hyphens: auto;
+    & h1, h2, h3, h4, h5, h6 {
+        text-align: left;
+    }
+}
+
+div.msg {
+    flex: 1;
+    max-width: 110ch;
+    margin: 8% auto;
+    text-align: left;
+    & h1 {
+        text-align: center;
+    }
+}
+
+main {
+    flex: 1;
+
+    /* Center horizontally and vertically */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &>* {
+        min-height: 25vh;
+    }
+}
+
+footer {
+    font-size: 0.8em;
+    @include theme('color', $fg-2);
+
+    &>ul {
+        padding: 0;
+        &>li {
+            display: inline-block;
+            margin: 0 2.5%;
+
+            &>a {
+                color: inherit;
+                &:hover {
+                    @include theme('color', $fg-0);
+                }
+            }
+        }
+    }
+}
+
+body>.toast {
+    /* toast at the bottom of the screen */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 1em 0.5em;
+    background-color: #333;
+    color: #FFF;
+    border-top: 1px solid #666;
+    text-align: center;
+    transition: transform 0.15s ease;
+    will-change: transform;
+
+    &>button {
+        margin-left: 1em;
+        text-transform: uppercase;
+        font-weight: lighter;
+        color: #00B5AD; /* turquoise */
+        background-color: transparent;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+

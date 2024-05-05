@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="de-AT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Metadata -->
+    <title><%~ title %></title>
+    <meta name="description" content="<%~ description %>">
+    <meta name="author" content="René Hickersberger">
+
+    <!-- Fonts -->
+    <% if (includeFonts) { %>
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <%
+            const url = 'https://fonts.googleapis.com/css2?family=Khand:wght@700&text=Wie+ist+die+Lage+?+Einstellungen';
+            let fontCss = await fetch(url, {
+                    headers: new Headers({
+                        // need to specify a modern browser to get woff2
+                        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0',
+                    }),
+                })
+                .then(resp => resp.text())
+                .then(text => `<style>${text}</style>`)
+                .catch(err => {
+                    console.error('Failed to fetch font CSS: ', err);
+                    return `<link href="${url}" rel="stylesheet">`;
+                });
+        %>
+
+        <%~ fontCss %>
+    <% } %>
+
+    <!-- Styles and misc links -->
+    <link rel="stylesheet" href="../styles/styles.scss">
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+    <link rel="manifest" href="/app.webmanifest">
+
+    <!-- Icons -->
+    <% const manifest = JSON.parse(include('../../app.webmanifest')); %>
+    <% for (const icon of manifest.icons) { %>
+        <% if (icon.sizes === '180x180') { %>
+            <link rel="apple-touch-icon" sizes="<%= icon.sizes %>" href="<%= icon.src.replace(/^\./, '') %>">
+        <% } else { %>
+            <link rel="icon" type="image/png" sizes="<%= icon.sizes %>" href="<%= icon.src.replace(/^\./, '') %>">
+        <% } %>
+    <% } %>
+    <meta name="msapplication-TileColor" content="<%= manifest.theme_color %>">
+    <meta name="theme-color" content="<%= manifest.theme_color %>">
+
+    <!-- Scripts -->
+    <% if (includeScripts) { %>
+        <script src="../scripts/main.ts" async></script>
+    <% } %>
+</head>
+<body>
+    <% if (renderNav) { %>
+        <nav>
+            <a href="/">Home</a>
+        </nav>
+    <% } %>
+
