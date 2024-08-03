@@ -16,7 +16,10 @@ export class LageCountdownEl extends LitElement {
     }
 
     private async getEndDate(): Promise<Date> {
-        const s = await store.get('endDate') ?? '2024-08-01';
+        const s = await store.get('endDate');
+        if (!s) {
+            return Promise.resolve(new Date(0));
+        }
         let date = new Date(s);
         // we want midnight / the start of the next day
         date.setDate(date.getDate() + 1);
@@ -108,6 +111,35 @@ export class LageCountdownEl extends LitElement {
                 font-size: 2.5em;
             }
         }
+
+        /* button */
+        a {
+            display: inline-block;
+            padding: 0.5em 1em;
+            margin: 0.5em;
+            border: 2px solid white;
+            border-radius: 0.5em;
+            text-decoration: none;
+            font-family: 'Black Ops One', monospace;
+            font-size: 1.5em;
+            transition: background-color 0.2s;
+
+            color: white;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        a:hover {
+            background-color: rgba(0, 0, 0, 0.65);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            a {
+                color: white;
+                background-color: rgba(255, 255, 255, 0.025);
+            }
+            a:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+        }
     `;
 }
 
@@ -125,8 +157,12 @@ class TimeLeftCalculator {
     }
 
     private async calculateTimeLeft(): Promise<number> {
+        const endDate = await this.endDate;
+        if (endDate.getTime() === 0) {
+            return Promise.resolve(-1);
+        }
         const now = dateToNum(new Date());
-        const end = dateToNum(await this.endDate);
+        const end = dateToNum(endDate);
         if (now >= end)  return Promise.resolve(0);
         return Promise.resolve(end - now);
     }
@@ -135,28 +171,37 @@ class TimeLeftCalculator {
         this.timeLeft = this.calculateTimeLeft();
     }
 
-    async getWeeksLeft(): Promise<number> {
-        return Math.floor(await this.timeLeft / 1000 / 60 / 60 / 24 / 7);
+    static getWeeksLeft(timeLeft: number): number {
+        return Math.floor(timeLeft / 1000 / 60 / 60 / 24 / 7);
     }
-    async getDaysLeft(): Promise<number> {
-        return Math.floor(await this.timeLeft / 1000 / 60 / 60 / 24) % 7;
+    static getDaysLeft(timeLeft: number): number {
+        return Math.floor(timeLeft / 1000 / 60 / 60 / 24) % 7;
     }
-    async getHoursLeft(): Promise<number> {
-        return Math.floor(await this.timeLeft / 1000 / 60 / 60) % 24;
+    static getHoursLeft(timeLeft: number): number {
+        return Math.floor(timeLeft / 1000 / 60 / 60) % 24;
     }
-    async getMinutesLeft(): Promise<number> {
-        return Math.floor(await this.timeLeft / 1000 / 60) % 60;
+    static getMinutesLeft(timeLeft: number): number {
+        return Math.floor(timeLeft / 1000 / 60) % 60;
     }
-    async getSecondsLeft(): Promise<number> {
-        return Math.floor(await this.timeLeft / 1000) % 60;
+    static getSecondsLeft(timeLeft: number): number {
+        return Math.floor(timeLeft / 1000) % 60;
     }
 
     async getTimeLeftStr(): Promise<TemplateResult> {
-        const w = await this.getWeeksLeft();
-        const d = await this.getDaysLeft();
-        const h = await this.getHoursLeft();
-        const m = await this.getMinutesLeft();
-        const s = await this.getSecondsLeft();
+        const timeLeft = await this.timeLeft;
+        if (timeLeft === -1) {
+            return html`
+                <a href="/settings">
+                    Abrüstdatum festlegen
+                </a>
+            `;
+        }
+
+        const w = TimeLeftCalculator.getWeeksLeft(timeLeft);
+        const d = TimeLeftCalculator.getDaysLeft(timeLeft);
+        const h = TimeLeftCalculator.getHoursLeft(timeLeft);
+        const m = TimeLeftCalculator.getMinutesLeft(timeLeft);
+        const s = TimeLeftCalculator.getSecondsLeft(timeLeft);
 
         return html`
             <ul>
@@ -193,7 +238,12 @@ class TimeLeftCalculator {
     }
 
     async getEndDateStr(): Promise<string> {
-        return Promise.resolve((await this.endDate).toLocaleDateString('de-AT'));
+        const d = await this.endDate;
+        if (d.getTime() === 0) {
+            return Promise.resolve('');
+        }
+
+        return Promise.resolve(d.toLocaleDateString('de-AT'));
     }
 }
 
