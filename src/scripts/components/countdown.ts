@@ -125,10 +125,10 @@ class TimeLeftCalculator {
     }
 
     private async calculateTimeLeft(): Promise<number> {
-        const now = new Date();
-        const end = await this.endDate;
-        //console.log('now: ', now, 'end: ', end);
-        return Promise.resolve(dateToNum(end) - dateToNum(now));
+        const now = dateToNum(new Date());
+        const end = dateToNum(await this.endDate);
+        if (now >= end)  return Promise.resolve(0);
+        return Promise.resolve(end - now);
     }
 
     update() {
