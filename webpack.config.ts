@@ -6,12 +6,14 @@ import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
 import { InjectManifest } from 'workbox-webpack-plugin';
-const SitemapPlugin = require('sitemap-webpack-plugin').default;
+import SitemapPlugin from 'sitemap-webpack-plugin';
 //import CompressionPlugin from 'compression-webpack-plugin';
 //import zlib from 'zlib';
 
 const devMode = process.env['NODE_ENV'] === 'development';
 const DISABLE_SERVICE_WORKER_IN_DEV_MODE = true;
+
+const rootDir = path.dirname(new URL(import.meta.url).pathname);
 
 let plugins: webpack.WebpackPluginInstance[] = [];
 
@@ -76,8 +78,8 @@ plugins.push(new HtmlBundlerPlugin({
 //
 
 const injectPlugin = new InjectManifest({
-    swSrc: path.resolve(__dirname, 'src', 'scripts', 'sw.ts'),
-    swDest: path.resolve(__dirname, 'dist', 'sw.js'),
+    swSrc: path.resolve(rootDir, 'src', 'scripts', 'sw.ts'),
+    swDest: path.resolve(rootDir, 'dist', 'sw.js'),
     maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
     exclude: [
         /.+\.html_.+\.css/, // don't cache non-existent *.html_*.css files, like index.html_styles.css
@@ -108,7 +110,7 @@ plugins.push(injectPlugin);
 //
 // Site map, robots.txt, etc.
 //
-plugins.push(new SitemapPlugin({
+plugins.push(new (SitemapPlugin as any).default({
     base: 'https://die-lage.at',
     paths: [
         '/',
@@ -137,7 +139,7 @@ const config: webpack.Configuration = {
     devtool: devMode ? 'source-map' : undefined,
     devServer: {
         static: {
-            directory: path.join(__dirname, 'dist'),
+            directory: path.join(rootDir, 'dist'),
         },
         compress: true,
     },
@@ -146,7 +148,7 @@ const config: webpack.Configuration = {
         './src/scripts/main.ts',
     ],
     output: {
-        path: path.join(__dirname, 'dist'),
+        path: path.join(rootDir, 'dist'),
         filename: 'static/[name].[contenthash].js',
         cssFilename: 'static/[name].[contenthash].css',
     },

@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "die-lage.at website",
   "scripts": {
-    "build:dev": "npm run clean && cross-env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' NODE_OPTIONS=no-network-family-autoselection NODE_ENV=development webpack",
-    "build:prod": "npm run clean && cross-env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' NODE_OPTIONS=no-network-family-autoselection NODE_ENV=production webpack",
+    "build:dev": "npm run clean && cross-env NODE_OPTIONS=no-network-family-autoselection NODE_ENV=development webpack",
+    "build:prod": "npm run clean && cross-env NODE_OPTIONS=no-network-family-autoselection NODE_ENV=production webpack",
     "lint": "npm run lint:eslint && npm run lint:lit-analyzer && npm run lint:html-validate",
     "lint:eslint": "eslint 'src/**/*.ts'",
     "lint:lit-analyzer": "lit-analyzer",
