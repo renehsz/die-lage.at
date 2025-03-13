@@ -134,6 +134,29 @@ plugins.push(new CopyPlugin({
     ],
 }));
 
+//
+// Copyright & License banner in JavaScript files to satisfy LibreJS
+//
+const licenseIncludes = [/\.js$/];
+plugins.push(new webpack.BannerPlugin({
+    raw: true,
+    banner:
+`// SPDX-License-Identifier: GPL-3.0-or-later
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&dn=gpl-3.0.txt GPL-3.0-or-later
+// @source https://github.com/renehsz/die-lage.at`,
+    stage: 999999999, // make sure this is one of the last plugins to run (but before compression)
+    include: licenseIncludes,
+    footer: false,
+}));
+plugins.push(new webpack.BannerPlugin({
+    raw: true,
+    banner:
+`// @license-end`,
+    stage: 999999999, // ditto
+    include: licenseIncludes,
+    footer: true,
+}));
+
 const config: webpack.Configuration = {
     mode: devMode ? 'development' : 'production',
     devtool: devMode ? 'source-map' : undefined,
