@@ -1,50 +1,20 @@
 import path from 'path';
 import webpack from 'webpack';
 import 'webpack-dev-server';
-import HtmlBundlerPlugin from 'html-bundler-webpack-plugin';
-import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
-import TerserPlugin from 'terser-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin';
-import { InjectManifest } from 'workbox-webpack-plugin';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import HtmlBundlerPlugin from 'html-bundler-webpack-plugin';
 import SitemapPlugin from 'sitemap-webpack-plugin';
-//import CompressionPlugin from 'compression-webpack-plugin';
-//import zlib from 'zlib';
+import TerserPlugin from 'terser-webpack-plugin';
+import WebpackShellPluginNext from 'webpack-shell-plugin-next';
+import { InjectManifest } from 'workbox-webpack-plugin';
 
 const devMode = process.env['NODE_ENV'] === 'development';
 const DISABLE_SERVICE_WORKER_IN_DEV_MODE = true;
 
-const rootDir = path.dirname(new URL(import.meta.url).pathname);
+const rootDir = path.dirname(decodeURIComponent(new URL(import.meta.url).pathname));
 
 let plugins: webpack.WebpackPluginInstance[] = [];
-
-//
-// Compression plugins
-//
-
-/*
-TODO: Currently the compression plugins are disabled because they compress before the html bundler does its job. Fix this.
-if (!devMode) {
-    plugins.push(new CompressionPlugin({
-        filename: '[path][base].gz',
-        algorithm: 'gzip',
-        test: /\.(js|css|html|svg|xml)$/,
-        threshold: 1, // Compress files regardless of size! We want maximum performance.
-        deleteOriginalAssets: false,
-    }));
-    plugins.push(new CompressionPlugin({
-        filename: '[path][base].br',
-        algorithm: 'brotliCompress',
-        compressionOptions: {
-            params: {
-                [zlib.constants.BROTLI_PARAM_QUALITY]: 11,
-            },
-        } as zlib.ZlibOptions,
-        test: /\.(js|css|html|svg|xml)$/,
-        threshold: 1, // same as above
-        deleteOriginalAssets: false,
-    }));
-}
-*/
 
 //
 // HTML bundler
@@ -79,7 +49,7 @@ plugins.push(new HtmlBundlerPlugin({
 
 const injectPlugin = new InjectManifest({
     swSrc: path.resolve(rootDir, 'src', 'scripts', 'sw.ts'),
-    swDest: path.resolve(rootDir, 'dist', 'sw.js'),
+    swDest: path.resolve(rootDir, 'build', 'sw.js'),
     maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
     exclude: [
         /.+\.html_.+\.css/, // don't cache non-existent *.html_*.css files, like index.html_styles.css
@@ -119,19 +89,28 @@ plugins.push(new (SitemapPlugin as any).default({
     options: {
         filename: 'sitemap.xml',
         changefreq: 'monthly',
-        skipgzip: true, // handled by CompressionPlugin
+        skipgzip: true, // handled by Makefile
     },
 }));
 
+// Copy static files
 plugins.push(new CopyPlugin({
     patterns: [
-        { from: './src/robots.txt', to: './' },
         { from: './src/icons/favicon.ico', to: './' },
         { from: './src/icons/*.png', to: './icons/[name][ext]' },
         { from: './src/screenshots/*', to: './screenshots/[name][ext]' },
         { from: './src/app.webmanifest', to: './' },
         { from: './src/styles/fonts/*', to: './fonts/' },
     ],
+}));
+
+// `make dist` as last build step (for compression, etc.)
+plugins.push(new WebpackShellPluginNext({
+    onBuildEnd: {
+        scripts: [
+            'make dist',
+        ],
+    },
 }));
 
 //
@@ -162,7 +141,7 @@ const config: webpack.Configuration = {
     devtool: devMode ? 'source-map' : undefined,
     devServer: {
         static: {
-            directory: path.join(rootDir, 'dist'),
+            directory: path.join(rootDir, 'build'),
         },
         compress: true,
     },
@@ -171,7 +150,7 @@ const config: webpack.Configuration = {
         './src/scripts/main.ts',
     ],
     output: {
-        path: path.join(rootDir, 'dist'),
+        path: path.join(rootDir, 'build'),
         filename: 'static/[name].[contenthash].js',
         cssFilename: 'static/[name].[contenthash].css',
     },
