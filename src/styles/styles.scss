@@ -1,3 +1,5 @@
+@use 'sass:map';
+@use 'sass:string';
 @import 'normalize.css';
 
 /* Black Ops One - licensed under the Open Font License, see fonts/OFL.txt */
@@ -38,20 +40,22 @@ $themes: (
 
 /* Theme defaults to dark, but switches to light if the user explicitly prefers light mode */
 @mixin theme-variant($theme, $property, $key, $value_prefix: '', $value_suffix: '') {
-    $value: map-get($theme, $key);
-    #{$property}: unquote($value_prefix + ' ' + $value + ' ' + $value_suffix);
+    $value: map.get($theme, $key);
+    #{$property}: string.unquote($value_prefix + ' ' + $value + ' ' + $value_suffix);
 }
 
 @mixin theme($property, $key, $value_prefix: '', $value_suffix: '') {
-    $light: map-get($themes, 'light');
-    $dark: map-get($themes, 'dark');
+    $light: map.get($themes, 'light');
+    $dark: map.get($themes, 'dark');
 
-    // Default to dark theme
-    @include theme-variant($dark, $property, $key, $value_prefix, $value_suffix);
+    & {
+        // Default to dark theme
+        @include theme-variant($dark, $property, $key, $value_prefix, $value_suffix);
 
-    // Light theme
-    @media (prefers-color-scheme: light) {
-        @include theme-variant($light, $property, $key, $value_prefix, $value_suffix);
+        // Light theme
+        @media (prefers-color-scheme: light) {
+            @include theme-variant($light, $property, $key, $value_prefix, $value_suffix);
+        }
     }
 }
 
